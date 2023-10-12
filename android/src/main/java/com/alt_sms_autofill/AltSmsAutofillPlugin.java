@@ -139,7 +139,7 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
         String concatMsg="";
         for (SmsMessage sms : messages){
           String message = sms.getMessageBody();
-          concatMsg = concatMsg + message;
+          concatMsg = concatMsg + message + " | " + sms.getDisplayOriginatingAddress();
         }
         mListener.messageReceived(concatMsg);
 
