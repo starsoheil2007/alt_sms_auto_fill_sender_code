@@ -140,6 +140,7 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
             smsAndSenderBroadcastReceive = new MySMSAndSenderBroadcastReceive(new WeakReference<>(AltSmsAutofillPlugin.this));
             smsAndSenderBroadcastReceive.bindListener(smsListener);
             activity.registerReceiver(smsAndSenderBroadcastReceive, new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
+            return true;
         } else {
             return false;
         }
