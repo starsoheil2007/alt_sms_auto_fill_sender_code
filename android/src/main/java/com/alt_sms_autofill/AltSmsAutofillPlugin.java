@@ -34,6 +34,7 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
     private MethodChannel channel;
     private Activity activity;
     private int myPermissionCode = 1;
+    private int myPermissionCodeForSender = 2;
     private boolean permissionGranted = false;
     private Result result;
     private MySMSBroadcastReceive broadcastReceiver;
@@ -67,7 +68,7 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
             if (!permissionGranted) {
                 ActivityCompat.requestPermissions(activity,
                         new String[]{Manifest.permission.RECEIVE_SMS},
-                        myPermissionCode);
+                        myPermissionCodeForSender);
             } else {
                 smsAndSenderBroadcastReceive = new MySMSAndSenderBroadcastReceive(new WeakReference<>(AltSmsAutofillPlugin.this));
                 smsAndSenderBroadcastReceive.bindListener(smsListener);
@@ -128,12 +129,17 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
 
     @Override
     public boolean onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == 1 && grantResults.length > 0
+        if (requestCode == myPermissionCode && grantResults.length > 0
                 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             broadcastReceiver = new MySMSBroadcastReceive(new WeakReference<>(AltSmsAutofillPlugin.this));
             broadcastReceiver.bindListener(smsListener);
             activity.registerReceiver(broadcastReceiver, new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
             return true;
+        } else if (requestCode == myPermissionCodeForSender && grantResults.length > 0
+                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            smsAndSenderBroadcastReceive = new MySMSAndSenderBroadcastReceive(new WeakReference<>(AltSmsAutofillPlugin.this));
+            smsAndSenderBroadcastReceive.bindListener(smsListener);
+            activity.registerReceiver(smsAndSenderBroadcastReceive, new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
         } else {
             return false;
         }
