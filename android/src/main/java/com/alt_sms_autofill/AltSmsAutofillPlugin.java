@@ -76,11 +76,17 @@ public class AltSmsAutofillPlugin implements FlutterPlugin, MethodCallHandler, A
             }
         } else if (call.method.equals("unregisterListener")) {
             try {
-                activity.unregisterReceiver(broadcastReceiver);
-                activity.unregisterReceiver(smsAndSenderBroadcastReceive);
+                if(broadcastReceiver!=null) {
+                    activity.unregisterReceiver(broadcastReceiver);
+                }
             } catch (Exception ex) {
             }
-
+            try {
+                if(smsAndSenderBroadcastReceive!=null) {
+                    activity.unregisterReceiver(smsAndSenderBroadcastReceive);
+                }
+            } catch (Exception ex) {
+            }
         } else {
             result.notImplemented();
         }
